@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HopeLine – மனநல மதிப்பீடு</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1a2e;--ink-soft:#3d5066;--ink-mute:#7a8fa6;
+  --surface:#fff;--bg:#eef4fd;--s2:#f0f6ff;--s3:#ddeeff;
+  --accent:#2563eb;--green:#10b981;--warn:#f59e0b;--red:#ef4444;
+  --border:#d1e0f0;--radius:14px;
+  --fh:'DM Serif Display',Georgia,serif;--fb:'DM Sans',sans-serif;
+}
+body{font-family:var(--fb);background:var(--bg);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem 4rem}
+#app{width:100%;max-width:660px}
+.screen{display:none}.screen.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(37,99,235,.07)}
+
+/* ── LANG SCREEN ── */
+.lang-wrap{text-align:center;padding:3rem 2rem}
+.lang-logo{font-family:var(--fh);font-size:30px;color:var(--ink);margin-bottom:4px}
+.lang-sub{font-size:18px;color:var(--ink-soft);margin-bottom:6px}
+.lang-div{width:40px;height:2px;background:var(--border);margin:12px auto}
+.lang-q{font-size:14px;color:var(--ink-soft);margin-bottom:3px}
+.lang-btns{display:flex;gap:16px;justify-content:center;margin-top:24px}
+.lang-btn{padding:16px 44px;border-radius:14px;border:2px solid var(--border);background:var(--s2);font-family:var(--fb);font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;transition:all .15s}
+.lang-btn:hover{border-color:var(--accent);background:#eff6ff;color:var(--accent)}
+.lang-btn-s{font-size:11px;color:var(--ink-mute);margin-top:3px}
+
+/* ── BADGE ── */
+.hl-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--s2);border:1px solid var(--border);padding:5px 14px;border-radius:99px;margin-bottom:18px}
+.hl-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+
+/* ── READY SCREEN ── */
+.pg-title{font-family:var(--fh);font-size:24px;color:var(--ink);margin-bottom:8px}
+.bi-sub{font-size:13px;color:var(--ink-soft);line-height:1.75;margin-bottom:22px;padding:12px 16px;background:var(--s2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0}
+.ready-btns{display:flex;gap:12px}
+.btn-ready{flex:1;padding:14px;border-radius:var(--radius);border:2px solid var(--border);background:var(--s2);font-family:var(--fb);font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;transition:all .15s}
+.btn-ready:hover{border-color:var(--accent);background:#eff6ff;color:var(--accent)}
+.not-ready-box{display:none;margin-top:16px;padding:14px;background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;font-size:13px;color:#78350f;line-height:1.6}
+
+/* ── INTAKE SCREEN ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:6px}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:14px;color:var(--ink);background:var(--s2);transition:border .15s}
+.form-input:focus{outline:none;border-color:var(--accent);background:#fff}
+.form-err{color:var(--red);font-size:12px;margin-top:8px;display:none}
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:var(--radius);font-family:var(--fb);font-size:15px;font-weight:600;color:#fff;cursor:pointer;margin-top:6px;transition:background .15s,transform .1s}
+.btn-primary:hover{background:#1d4ed8;transform:translateY(-1px)}
+
+/* ── QUIZ SCREEN ── */
+.prog-wrap{margin-bottom:1.2rem}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:6px}
+.prog-label{font-size:12px;color:var(--ink-mute)}
+.prog-bar{height:5px;background:var(--s3);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s ease}
+.dots-wrap{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.2rem}
+.dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;color:var(--ink-mute);cursor:pointer;transition:all .15s}
+.dot.answered{background:var(--green);border-color:var(--green);color:#fff}
+.dot.current{border-color:var(--accent);color:var(--accent);font-weight:700}
+
+/* Branch tag colours */
+.btag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-bottom:8px}
+.btag.normal{background:var(--s2);color:var(--accent)}
+.btag.suicide{background:#fee2e2;color:#7f1d1d}
+.btag.phq{background:#f5f3ff;color:#5b21b6}
+.btag.gad{background:#ecfdf5;color:#065f46}
+.btag.anger{background:#fff7ed;color:#92400e}
+.btag.substance{background:#fef9c3;color:#713f12}
+
+.q-sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:5px}
+.q-main{font-family:var(--fh);font-size:20px;color:var(--ink);line-height:1.4;margin-bottom:3px}
+.q-sec2{font-size:12px;color:var(--ink-mute);font-style:italic;margin-bottom:4px}
+.q-sub{font-size:11px;color:var(--ink-mute);margin-bottom:1.1rem;font-style:italic}
+
+/* Options */
+.opt-btn{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:11px 14px;margin-bottom:7px;background:var(--s2);border:1.5px solid var(--border);border-radius:12px;font-family:var(--fb);font-size:14px;color:var(--ink);cursor:pointer;transition:all .12s}
+.opt-btn:hover{background:var(--s3);border-color:#93c5fd}
+.opt-btn.sel{background:#eff6ff;border-color:var(--accent);color:#1e3a8a}
+.opt-btn.warn.sel{background:#fffbeb;border-color:var(--warn);color:#78350f}
+.opt-btn.dng.sel{background:#fef2f2;border-color:var(--red);color:#7f1d1d}
+.opt-n{width:26px;height:26px;border-radius:8px;flex-shrink:0;background:var(--surface);border:1.5px solid var(--border);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--ink-mute);transition:all .12s;margin-top:1px}
+.opt-btn.sel .opt-n{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt-btn.warn.sel .opt-n{background:var(--warn);border-color:var(--warn);color:#fff}
+.opt-btn.dng.sel .opt-n{background:var(--red);border-color:var(--red);color:#fff}
+.om{display:block;font-weight:500}
+.os{display:block;font-size:12px;color:var(--ink-mute);margin-top:2px}
+
+/* Nav */
+.nav-row{display:flex;gap:8px;margin-top:1.2rem}
+.btn-prev{flex:1;padding:10px;background:transparent;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--fb);font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .12s}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn-prev:disabled{opacity:.3;cursor:default}
+.btn-next{flex:2;padding:10px;background:var(--accent);border:none;border-radius:var(--radius);font-family:var(--fb);font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s}
+.btn-next:hover:not(:disabled){background:#1d4ed8}
+.btn-next:disabled{opacity:.4;cursor:default}
+
+/* ── RESULT SCREEN ── */
+.end-hero{text-align:center;padding:.5rem 0 1.5rem}
+.end-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.end-title{font-family:var(--fh);font-size:24px;color:var(--ink);margin-bottom:8px}
+.tier-pill{display:inline-block;font-size:12px;font-weight:700;padding:4px 16px;border-radius:99px;margin-bottom:12px}
+.t1{background:#d1fae5;color:#065f46}.t2{background:#fef3c7;color:#78350f}.t3{background:#fee2e2;color:#7f1d1d}
+.end-desc{font-size:14px;color:var(--ink-soft);line-height:1.75}
+.sh{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.sh::after{content:'';flex:1;height:1px;background:var(--border)}
+.alert-box{border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.65;margin-bottom:4px}
+.ag{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.ay{background:#fef3c7;color:#78350f;border:1px solid #fcd34d}
+.ar{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.sc{background:var(--s2);border-radius:10px;padding:10px 12px}
+.sn{font-size:11px;color:var(--ink-mute);margin-bottom:5px}
+.sbw{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:5px}
+.sbf{height:100%;border-radius:99px}
+.sv{font-size:12px;font-weight:600;color:var(--ink-soft)}
+.ar-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--s2)}
+.ar-row:last-child{border-bottom:none}
+.ar-qn{width:28px;height:28px;border-radius:8px;background:var(--s2);border:1px solid var(--border);font-size:11px;font-weight:700;color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.ar-m{font-size:13px;font-weight:500;color:var(--ink)}
+.ar-s{font-size:11px;color:var(--ink-mute);margin-top:2px}
+.end-btns{display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.btn-g{padding:10px 20px;background:transparent;border:1.5px solid var(--border);border-radius:var(--radius);font-family:var(--fb);font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .12s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-g:hover{border-color:var(--accent);color:var(--accent)}
+.btn-s{padding:10px 20px;background:var(--accent);border:none;border-radius:var(--radius);font-family:var(--fb);font-size:13px;font-weight:600;color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background .12s}
+.btn-s:hover{background:#1d4ed8}
+.btn-p{padding:10px 20px;background:#059669;border:none;border-radius:var(--radius);font-family:var(--fb);font-size:13px;font-weight:600;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .12s}
+.btn-p:hover{background:#047857}
+.save-msg{text-align:center;font-size:12px;color:var(--ink-mute);margin-top:10px;min-height:18px}
+
+/* ── PRINT ── */
+@media print{body{background:#fff;padding:0}.screen{display:none!important}#parea{display:block!important}.np{display:none!important}}
+#parea{display:none}
+.ph{border-bottom:2px solid #0f1a2e;padding-bottom:12px;margin-bottom:16px}
+.pt{font-family:var(--fh);font-size:20px;color:#0f1a2e}
+.pd{font-size:11px;color:#7a8fa6;margin-top:3px}
+.pm{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.pmi{font-size:12px;color:#3d5066}.pmi b{color:#0f1a2e}
+.pst{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7a8fa6;margin-bottom:6px;border-bottom:1px solid #d1e0f0;padding-bottom:3px;margin-top:14px}
+.par{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f0f6ff;font-size:11px}
+.pqn{min-width:28px;color:#2563eb;font-weight:700}.pq{color:#3d5066;flex:1.5}.pa{color:#0f1a2e;font-weight:500;flex:1}
+.psr{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid #f0f6ff}
+.ptier{display:inline-block;padding:4px 14px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:8px}
+.pdisc{margin-top:16px;padding:8px;background:#f0f6ff;border-radius:6px;font-size:10px;color:#7a8fa6;text-align:center}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── LANG SCREEN ── -->
+  <div id="screen-lang" class="screen active">
+    <div class="card lang-wrap">
+      <div class="lang-logo">🌿 HopeLine</div>
+      <div class="lang-sub">நம்பிக்கை வழி திட்டம்</div>
+      <div class="lang-div"></div>
+      <div class="lang-q">Which language do you prefer?</div>
+      <div class="lang-q">நீங்கள் எந்த மொழியை விரும்புகிறீர்கள்?</div>
+      <div class="lang-btns">
+        <button class="lang-btn" onclick="setLang('ta')">
+          தமிழ்<div class="lang-btn-s">Tamil</div>
+        </button>
+        <button class="lang-btn" onclick="setLang('en')">
+          English<div class="lang-btn-s">ஆங்கிலம்</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── READY SCREEN — text injected by quiz.js after lang chosen ── -->
+  <div id="screen-ready" class="screen">
+    <div class="card">
+      <div class="hl-badge"><div class="hl-dot"></div><span id="r-badge"></span></div>
+      <div class="pg-title" id="r-title"></div>
+      <div class="bi-sub" id="r-sub"></div>
+      <div class="ready-btns">
+        <button class="btn-ready" id="r-btn-yes" onclick="goIntake()"></button>
+        <button class="btn-ready" id="r-btn-no"  onclick="notReady()"></button>
+      </div>
+      <div class="not-ready-box" id="nrbox"></div>
+    </div>
+  </div>
+
+  <!-- ── INTAKE SCREEN — text injected by quiz.js ── -->
+  <div id="screen-intake" class="screen">
+    <div class="card">
+      <div class="hl-badge"><div class="hl-dot"></div><span id="i-badge"></span></div>
+      <div class="pg-title" id="i-title"></div>
+      <div class="bi-sub" id="i-sub"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" id="l-name"></label>
+          <input class="form-input" id="fn" type="text"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="l-pid"></label>
+          <input class="form-input" id="fp" type="text" placeholder="PID Number"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" id="l-age"></label>
+          <input class="form-input" id="fa" type="number" min="10" max="100"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="l-date"></label>
+          <input class="form-input" id="fd" type="date"/>
+        </div>
+      </div>
+      <div class="form-err" id="ferr"></div>
+      <button class="btn-primary" id="btn-start" onclick="beginQuiz()"></button>
+    </div>
+  </div>
+
+  <!-- ── QUIZ SCREEN ── -->
+  <div id="screen-q" class="screen">
+    <div class="prog-wrap">
+      <div class="prog-row">
+        <span class="prog-label" id="ptxt">கேள்வி 1</span>
+        <span class="prog-label" id="ppct">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="pfill" style="width:0%"></div></div>
+    </div>
+    <div class="dots-wrap" id="dwrap"></div>
+    <div class="card">
+      <div id="btag" class="btag normal"></div>
+      <div class="q-sec"  id="qsec"></div>
+      <div class="q-main" id="qmain"></div>
+      <div class="q-sec2" id="qsec2"></div>
+      <div class="q-sub"  id="qsub"></div>
+      <div id="qopts"></div>
+      <div class="nav-row">
+        <button class="btn-prev" id="bprev" onclick="goPrev()">← <span id="lprev">முன்பு</span></button>
+        <button class="btn-next" id="bnext" onclick="goNext()"><span id="lnext">அடுத்து</span> →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULT SCREEN ── -->
+  <div id="screen-end" class="screen">
+    <div class="card">
+      <div class="end-hero">
+        <div class="end-icon"  id="eicon"></div>
+        <div class="end-title" id="etitle"></div>
+        <div class="tier-pill" id="tpill"></div>
+        <div class="end-desc"  id="edesc"></div>
+      </div>
+      <div id="awrap"></div>
+      <div class="sh"><span id="sh-scores"></span></div>
+      <div class="sg" id="sgrid"></div>
+      <div class="sh"><span id="sh-answers"></span></div>
+      <div id="alist"></div>
+      <div class="end-btns np">
+        <button class="btn-g" id="btn-restart" onclick="restartFull()"></button>
+        <a href="/dashboard" class="btn-s">📊 Dashboard</a>
+        <button class="btn-p" onclick="printRpt()">🖨 PDF / Print</button>
+      </div>
+      <div class="save-msg" id="smsg"></div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<div id="parea"></div>
+
+<!-- Load config first, then the engine -->
+<script src="/static/config.js"></script>
+<script src="/static/quiz.js"></script>
+</body>
+</html>

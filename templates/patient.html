@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HopeLine – Patient Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1a2e;--ink-soft:#3d5066;--ink-mute:#7a8fa6;
+  --surface:#fff;--bg:#eef4fd;--surface-2:#f0f6ff;--border:#d1e0f0;
+  --accent:#2563eb;--green:#10b981;--warn:#f59e0b;--red:#ef4444;
+  --font-head:'DM Serif Display',Georgia,serif;
+  --font-body:'DM Sans',sans-serif;
+}
+body{font-family:var(--font-body);background:var(--bg);min-height:100vh}
+a{text-decoration:none;color:inherit}
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--font-head);font-size:18px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.back{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;transition:color .12s}
+.back:hover{color:var(--accent)}
+.page{max-width:760px;margin:0 auto;padding:2rem 1.5rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:14px}
+
+/* Header */
+.ph-wrap{display:flex;gap:16px;align-items:flex-start}
+.ph-avatar{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.ph-name{font-family:var(--font-head);font-size:22px;color:var(--ink);margin-bottom:6px}
+.ph-meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:12px;color:var(--ink-mute);background:var(--surface-2);border:1px solid var(--border);padding:3px 10px;border-radius:6px}
+.chip-red{background:#fee2e2;color:#7f1d1d;border-color:#fca5a5}
+
+.tbadge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:4px 14px;border-radius:99px}
+.tb1{background:#d1fae5;color:#065f46}.tb2{background:#fef3c7;color:#78350f}.tb3{background:#fee2e2;color:#7f1d1d}
+
+/* Alert */
+.alert{border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.65}
+.a-green{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+.a-yellow{background:#fef3c7;color:#78350f;border:1px solid #fcd34d}
+.a-red{background:#fee2e2;color:#7f1d1d;border:1px solid #fca5a5}
+
+/* Domain scores */
+.sec-lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:12px}
+.sc-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sc-name{font-size:13px;color:var(--ink-soft);min-width:130px}
+.sc-bar{flex:1;height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.sc-fill{height:100%;border-radius:99px}
+.sc-val{font-size:12px;font-weight:600;color:var(--ink);min-width:42px;text-align:right}
+
+/* Answers */
+.ans-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--surface-2)}
+.ans-row:last-child{border-bottom:none}
+.ans-qn{width:28px;height:28px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);font-size:11px;font-weight:700;color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ans-en{font-size:13px;font-weight:500;color:var(--ink)}
+.ans-ta{font-size:12px;color:var(--ink-mute);margin-top:2px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><div class="brand-dot"></div>HopeLine</div>
+  <a href="/dashboard" class="back">← Dashboard திரும்பு</a>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER CARD -->
+  <div class="card">
+    <div class="ph-wrap">
+      {% if p.tier==3 %}
+        <div class="ph-avatar" style="background:#fee2e2">⚠️</div>
+      {% elif p.tier==2 %}
+        <div class="ph-avatar" style="background:#fef3c7">⚡</div>
+      {% else %}
+        <div class="ph-avatar" style="background:#d1fae5">✅</div>
+      {% endif %}
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+          <div class="ph-name">{{ p.name }}</div>
+          {% if p.tier==3 %}<span class="tbadge tb3">⚠ Tier 3 – உயர் ஆபத்து</span>
+          {% elif p.tier==2 %}<span class="tbadge tb2">⚡ Tier 2 – கவனிப்பு தேவை</span>
+          {% else %}<span class="tbadge tb1">✓ Tier 1 – சாதாரண நிலை</span>{% endif %}
+        </div>
+        <div class="ph-meta">
+          <span class="chip">PID: {{ p.pid }}</span>
+          <span class="chip">தேதி: {{ p.date }}</span>
+          <span class="chip">மொத்த மதிப்பெண்: {{ p.total_score }}</span>
+          {% if p.red_flags>0 %}
+          <span class="chip chip-red">🚩 {{ p.red_flags }} Red Flag{{ 's' if p.red_flags>1 }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERT CARD -->
+  <div class="card">
+    {% if p.tier==3 %}
+      <div class="alert a-red">🔴 <strong>உடனடி கவனிப்பு தேவை.</strong> இந்த நபருக்கு Psychologist / Doctor appointment உடனே arrange செய்யவும்.</div>
+    {% elif p.tier==2 %}
+      <div class="alert a-yellow">🟡 <strong>Follow-up பரிந்துரை.</strong> மனநல ஆலோசனை அல்லது Counselling session schedule செய்யவும்.</div>
+    {% else %}
+      <div class="alert a-green">🟢 <strong>சாதாரண நிலை.</strong> தொடர்ந்து monitoring தேவை. மாற்றம் தெரிந்தால் reassess செய்யவும்.</div>
+    {% endif %}
+  </div>
+
+  <!-- DOMAIN SCORES -->
+  <div class="card">
+    <div class="sec-lbl">Domain மதிப்பெண்கள்</div>
+    <div class="sc-row">
+      <div class="sc-name">மனநிலை (Mood)</div>
+      <div class="sc-bar"><div class="sc-fill" style="width:{{ [((p.mood_score/3)*100)|int,100]|min }}%;background:#2563eb"></div></div>
+      <div class="sc-val">{{ p.mood_score }} / 3</div>
+    </div>
+    <div class="sc-row">
+      <div class="sc-name">குடும்பம் (Family)</div>
+      <div class="sc-bar"><div class="sc-fill" style="width:{{ [((p.family_score/3)*100)|int,100]|min }}%;background:#10b981"></div></div>
+      <div class="sc-val">{{ p.family_score }} / 3</div>
+    </div>
+    <div class="sc-row">
+      <div class="sc-name">மனச்சோர்வு (Dep.)</div>
+      <div class="sc-bar"><div class="sc-fill" style="width:{{ [((p.dep_score/6)*100)|int,100]|min }}%;background:#6366f1"></div></div>
+      <div class="sc-val">{{ p.dep_score }} / 6</div>
+    </div>
+    <div class="sc-row">
+      <div class="sc-name">கோபம் (Anger)</div>
+      <div class="sc-bar"><div class="sc-fill" style="width:{{ [((p.anger_score/3)*100)|int,100]|min }}%;background:#f59e0b"></div></div>
+      <div class="sc-val">{{ p.anger_score }} / 3</div>
+    </div>
+  </div>
+
+  <!-- ANSWERS -->
+  <div class="card">
+    <div class="sec-lbl">விரிவான பதில்கள்</div>
+    {% for qid, ans in p.answers.items() %}
+    <div class="ans-row">
+      <div class="ans-qn">Q{{ qid }}</div>
+      <div>
+        <div class="ans-en">{{ ans.en }}</div>
+        <div class="ans-ta">{{ ans.ta }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+</body>
+</html>

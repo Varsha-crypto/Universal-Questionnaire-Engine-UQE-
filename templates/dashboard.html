@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HopeLine – Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f1a2e;--ink-soft:#3d5066;--ink-mute:#7a8fa6;
+  --surface:#fff;--bg:#eef4fd;--surface-2:#f0f6ff;--border:#d1e0f0;
+  --accent:#2563eb;--green:#10b981;--warn:#f59e0b;--red:#ef4444;
+  --font-head:'DM Serif Display',Georgia,serif;
+  --font-body:'DM Sans',sans-serif;
+}
+body{font-family:var(--font-body);background:var(--bg);min-height:100vh}
+
+/* NAV */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.brand{font-family:var(--font-head);font-size:18px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.nav-new{font-size:13px;font-weight:600;color:var(--accent);padding:6px 16px;border:1.5px solid var(--border);border-radius:99px;text-decoration:none;transition:all .12s}
+.nav-new:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.page-title{font-family:var(--font-head);font-size:24px;color:var(--ink);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--ink-mute);margin-bottom:1.75rem}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.75rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.stat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.stat-num{font-family:var(--font-head);font-size:30px;line-height:1;margin-bottom:4px}
+.stat-sub{font-size:11px;color:var(--ink-mute)}
+
+/* CONTROLS */
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem}
+.f-btn{font-size:12px;font-weight:600;padding:5px 14px;border-radius:99px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink-soft);cursor:pointer;transition:all .12s;white-space:nowrap}
+.f-btn:hover,.f-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.f-btn.on-2{background:var(--warn)!important;border-color:var(--warn)!important;color:#fff!important}
+.f-btn.on-3{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important}
+.search{flex:1;max-width:280px;padding:7px 14px;border:1.5px solid var(--border);border-radius:99px;font-family:var(--font-body);font-size:13px;color:var(--ink);background:var(--surface)}
+.search:focus{outline:none;border-color:var(--accent)}
+.rec-count{margin-left:auto;font-size:12px;color:var(--ink-mute)}
+
+/* TABLE CARD */
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-mute);background:var(--surface-2);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--surface-2);transition:background .1s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+td{padding:12px 16px;font-size:13px;color:var(--ink)}
+.td-name{font-weight:600}
+.td-pid{font-size:12px;color:var(--ink-mute);font-family:monospace}
+.td-date{font-size:12px;color:var(--ink-mute)}
+
+.tbadge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.tb1{background:#d1fae5;color:#065f46}
+.tb2{background:#fef3c7;color:#78350f}
+.tb3{background:#fee2e2;color:#7f1d1d}
+
+.mini-bar-wrap{display:flex;align-items:center;gap:8px}
+.mini-bar{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden;min-width:50px}
+.mini-fill{height:100%;border-radius:99px;background:var(--accent)}
+.mini-num{font-size:12px;font-weight:600;color:var(--ink-soft);min-width:24px}
+
+.view-link{font-size:11px;font-weight:600;color:var(--accent);padding:4px 10px;border:1px solid var(--border);border-radius:6px;text-decoration:none;transition:all .12s;white-space:nowrap}
+.view-link:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* EMPTY */
+.empty{text-align:center;padding:4rem 2rem;color:var(--ink-mute)}
+.empty-icon{font-size:44px;margin-bottom:14px}
+.empty-txt{font-size:14px;line-height:1.6}
+
+@media(max-width:640px){
+  .hide-mob{display:none}
+  .stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><div class="brand-dot"></div>HopeLine Dashboard</div>
+  <a href="/" class="nav-new">+ புதிய மதிப்பீடு</a>
+</nav>
+
+<div class="page">
+  <div class="page-title">நோயாளர் மதிப்பீடு பலகை</div>
+  <div class="page-sub">Patient Assessment Scoring Board — Department of Prisons & Correctional Services, Tamil Nadu</div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-lbl"><div class="stat-dot" style="background:var(--accent)"></div>மொத்தம்</div>
+      <div class="stat-num" style="color:var(--accent)">{{ total }}</div>
+      <div class="stat-sub">Total assessments</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl"><div class="stat-dot" style="background:var(--red)"></div>Tier 3</div>
+      <div class="stat-num" style="color:var(--red)">{{ tier3 }}</div>
+      <div class="stat-sub">உடனடி கவனிப்பு</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl"><div class="stat-dot" style="background:var(--warn)"></div>Tier 2</div>
+      <div class="stat-num" style="color:var(--warn)">{{ tier2 }}</div>
+      <div class="stat-sub">Follow-up தேவை</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl"><div class="stat-dot" style="background:var(--green)"></div>Tier 1</div>
+      <div class="stat-num" style="color:var(--green)">{{ tier1 }}</div>
+      <div class="stat-sub">சாதாரண நிலை</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl"><div class="stat-dot" style="background:var(--ink-mute)"></div>சராசரி</div>
+      <div class="stat-num">{{ avg_score }}</div>
+      <div class="stat-sub">Average score</div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button class="f-btn on" id="fa" onclick="filt(0,this)">எல்லாரும்</button>
+    <button class="f-btn" id="f3" onclick="filt(3,this)">🔴 Tier 3</button>
+    <button class="f-btn" id="f2" onclick="filt(2,this)">🟡 Tier 2</button>
+    <button class="f-btn" id="f1" onclick="filt(1,this)">🟢 Tier 1</button>
+    <input class="search" id="srch" type="text" placeholder="பெயர் / PID தேடுக…" oninput="applyFilt()"/>
+    <span class="rec-count" id="rcnt">{{ patients|length }} records</span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="tcard">
+    {% if patients %}
+    <table>
+      <thead>
+        <tr>
+          <th>பெயர் / Name</th>
+          <th>PID</th>
+          <th class="hide-mob">தேதி</th>
+          <th>Tier</th>
+          <th>மதிப்பெண்</th>
+          <th class="hide-mob">Red Flags</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        {% for p in patients %}
+        <tr data-tier="{{ p.tier }}"
+            data-name="{{ p.name|lower }}"
+            data-pid="{{ p.pid|lower }}"
+            onclick="window.location='/patient/{{ p.id }}'">
+          <td class="td-name">{{ p.name }}</td>
+          <td class="td-pid">{{ p.pid }}</td>
+          <td class="td-date hide-mob">{{ p.date }}</td>
+          <td>
+            {% if p.tier==3 %}<span class="tbadge tb3">⚠ Tier 3</span>
+            {% elif p.tier==2 %}<span class="tbadge tb2">⚡ Tier 2</span>
+            {% else %}<span class="tbadge tb1">✓ Tier 1</span>{% endif %}
+          </td>
+          <td>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar">
+                <div class="mini-fill" style="width:{{ [((p.total_score/30)*100)|int,100]|min }}%"></div>
+              </div>
+              <span class="mini-num">{{ p.total_score }}</span>
+            </div>
+          </td>
+          <td class="hide-mob">
+            {% if p.red_flags>0 %}
+              <span style="color:var(--red);font-weight:700;font-size:13px">🚩 {{ p.red_flags }}</span>
+            {% else %}
+              <span style="color:var(--ink-mute);font-size:13px">—</span>
+            {% endif %}
+          </td>
+          <td><a class="view-link" href="/patient/{{ p.id }}" onclick="event.stopPropagation()">காண →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon">📋</div>
+      <div class="empty-txt">இன்னும் மதிப்பீடுகள் இல்லை.<br>
+        <a href="/" style="color:var(--accent)">முதல் மதிப்பீடு செய்யுங்கள் →</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+let activeTier = 0;
+
+function filt(tier, btn) {
+  activeTier = tier;
+  document.querySelectorAll('.f-btn').forEach(b => {
+    b.classList.remove('on','on-2','on-3');
+  });
+  if (tier === 0) btn.classList.add('on');
+  else if (tier === 2) btn.classList.add('on-2');
+  else if (tier === 3) btn.classList.add('on-3');
+  else btn.classList.add('on');
+  applyFilt();
+}
+
+function applyFilt() {
+  const q = document.getElementById('srch').value.toLowerCase();
+  const rows = document.querySelectorAll('#tbody tr');
+  let vis = 0;
+  rows.forEach(r => {
+    const tm = activeTier === 0 || parseInt(r.dataset.tier) === activeTier;
+    const sm = !q || r.dataset.name.includes(q) || r.dataset.pid.includes(q);
+    r.style.display = (tm && sm) ? '' : 'none';
+    if (tm && sm) vis++;
+  });
+  document.getElementById('rcnt').textContent = vis + ' records';
+}
+</script>
+</body>
+</html>
